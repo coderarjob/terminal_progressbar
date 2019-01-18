@@ -58,9 +58,13 @@ static void bar_init(int cols)
 
 void print_progressbar(float progress,char *left_text,char *right_text)
 {
+	// The following two lines, remove the NULL char, as this cannot be shown
+	// in the printf. (NULL charracter indicated the end of the string)
+	if (leftChar == '\0') leftChar = ' ';
+	if (rightChar == '\0') rightChar = ' ';
+
 	int index,artifact_strlen,bar_length;
-	artifact_strlen = (leftChar == '\0')? 0:1;
-	artifact_strlen += (rightChar == '\0')? 0:1;
+	artifact_strlen = 2;
 	artifact_strlen += strlen(left_text);
 	artifact_strlen += strlen(right_text);
 	

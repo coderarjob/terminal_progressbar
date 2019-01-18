@@ -14,8 +14,8 @@
 
 #define PROGRESS_BAR_SETUP() blankChar = '-'; \
 							 filledChar = '#'; \
-							 leftChar = ' '; \
-							 rightChar = ' '
+							 leftChar = '\0'; \
+							 rightChar = '\0'
 
 int main()
 {
