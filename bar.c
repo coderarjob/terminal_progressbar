@@ -2,13 +2,19 @@
 #include<stddef.h> // for NULL
 #include<stdlib.h> // for malloc,atoi
 #include<string.h> // for strlen
-#include<sys/ioctl.h> // for ioctl
+
+#if defined(_WIN32) || defined(_WIN64)
+	#include<windows.h>
+#else
+	#include<sys/ioctl.h> // for ioctl
+#endif
+
 #include"bar.h"
 
 #define STDOUT 0
 
 static char *bar; 
-static int columns;
+static int columns = 0;
 
 char blankChar = '-';
 char filledChar = '=';
@@ -17,17 +23,23 @@ char rightChar = ']';
 
 static int getNeededColumnCount()
 {
+#if defined(_WIN32) || defined(_WIN64)
+	CONSOLE_SCREEN_BUFFER_INFO w;
+	GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE),&w);
+	// the -1 is only needed in windows (may be /r at the end is considered
+	// another charracter in windows). Without the -1, every print_progressbar
+	// is printing in another line.
+	return w.dwSize.X - 1; 
+#else
 	struct winsize w;
 	ioctl(STDOUT,TIOCGWINSZ,&w);
-
 	return w.ws_col;
+#endif
 }
 
-static void bar_init()
+static void bar_init(int cols)
 {
-	columns = getNeededColumnCount();
-
-	//create the bar
+	columns = cols;
 	int totalsize = columns * 2;
 
 	// free the bar before creating a new one.
@@ -54,7 +66,7 @@ void print_progressbar(float progress,char *left_text,char *right_text)
 	
 	int current_columns = getNeededColumnCount();
 	if (current_columns > columns){
-		bar_init();
+		bar_init(current_columns);
 	}
 
 	bar_length = current_columns - artifact_strlen;
