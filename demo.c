@@ -16,7 +16,7 @@
 int main()
 {
 	// Customizes the progress bar. Uncomment to see the effect.
-	//PROGRESS_BAR_SETUP();
+	PROGRESS_BAR_SETUP();
 
 	char right_text[10], left_text[100];
 	float progress = 0.0;
@@ -24,9 +24,9 @@ int main()
 	sprintf(left_text,"%-50s ","Progress:");
 
 	for(;;){
+		progress += 0.1f;
 		sprintf(right_text,"%6.1f%%",progress * 100);
 		print_progressbar(progress,left_text,right_text);
-		progress += 0.1f;
 		if (progress > 1.0){
 			printf("\n");
 			progress = 0;
